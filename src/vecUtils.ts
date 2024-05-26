@@ -30,6 +30,7 @@ export function vecSet(out: Float32Array, id: number, x: number, y: number, z: n
 
 export function vecAdd(out: Float32Array, id: number, v: Vec3, scale: number = 1) {
     v = toArray(v);
+    // console.log('v',v);
     for (let i = 0; i < 3; i++) out[id * 3 + i] += v[i] * scale;
 }
 

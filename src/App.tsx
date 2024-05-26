@@ -1,10 +1,11 @@
-import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei'
-import { Canvas, useFrame } from '@react-three/fiber'
-import Cloth from './Cloth'
-import { useEffect, useRef } from 'react';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import Cloth from './Cloth';
 import { useWorld } from './hooks';
-import { flag } from './utils';
+import { assertionFail } from './utils';
+import { vecAt } from './vecUtils';
+import SoftBody from './SoftBody';
 
 export default function App() {
   return (
@@ -18,27 +19,24 @@ let hasPrint = false;
 function Scene() {
   const world = useWorld();
 
-  useEffect(() => {
-    for (let i = 0; i < 100; i++) {
-      world.update(0.006, new THREE.Vector3(0, -9.8, 0));
-    }
-  }, []);
-
   useFrame((state, dt) => {
-    if (!flag)
+    if (!assertionFail) {
       world.update(dt, new THREE.Vector3(0, -1, 0));
-    else if (!hasPrint) {
-      hasPrint = true;
-      console.log(world.objects[0].positionArray)
-      console.log(world.objects[0].prevPositionArray)
-      console.log(world.objects[0].velocityArray)
+      const objs = [...world.objects]
+      if (objs.length === 0) return;
+      console.log(vecAt(objs[0].positionArray, 0))
     }
-    // world.update(dt, new THREE.Vㄍㄧector3(0, -9.8, 0));
-    // console.log(dt)
+    else if (!hasPrint) {
+      // ? Stop updating when assertion fails
+      hasPrint = true;
+      // console.log(world.objects[0].positionArray)
+      // console.log(world.objects[0].prevPositionArray)
+      // console.log(world.objects[0].velocityArray)
+    }
   });
 
   return <>
-    <PerspectiveCamera makeDefault position={[0, 0, 5]} />
+    <PerspectiveCamera makeDefault position={[0, 0, 10]} />
     <OrbitControls />
     <Lights />
     <Ground />
@@ -49,6 +47,7 @@ function Scene() {
     </mesh>}
 
     <Cloth />
+    <SoftBody />
   </>
 }
 
