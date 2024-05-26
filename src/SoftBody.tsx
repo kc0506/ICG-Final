@@ -3,10 +3,15 @@ import { usePBDObject } from "./hooks"
 
 import * as Physics from './physics';
 import bunnyModel from './bunny.json';
+import { forwardRef, useImperativeHandle } from "react";
 
-export default function SoftBody() {
+const SoftBody = forwardRef<Physics.SoftBody>(function ({ }, ref) {
 
     const [bunny, remount] = usePBDObject(Physics.SoftBody, bunnyModel)
+
+    useImperativeHandle(ref, () => {
+        return bunny;
+    });
 
     return <>
         <mesh geometry={bunny.geometry}>
@@ -14,5 +19,5 @@ export default function SoftBody() {
         </mesh>
     </>
 
-
-}
+});
+export default SoftBody;

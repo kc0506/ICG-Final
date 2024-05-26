@@ -6,15 +6,20 @@ import * as Physics from './physics';
 
 import ROC from './assets/ROC.png';
 import JP from './assets/JP.png';
+import { forwardRef, useImperativeHandle } from 'react';
 const ROCTexture = new THREE.TextureLoader().load(ROC);
 // const ROCTexture = new THREE.TextureLoader().load(JP);
 ROCTexture.repeat.set(1, 1);
 
-export default function Cloth() {
+const Cloth = forwardRef<Physics.Cloth>(function ({ }, ref) {
 
     const world = useWorld();
 
     const [cloth, remount] = usePBDObject(Physics.Cloth, 6.4, 4.2, { spacing: 0.1, enableCollision: true });
+
+    useImperativeHandle(ref, () => {
+        return cloth;
+    });
 
     // const cloth = useMemo(() => {
     //     console.log('hi')
@@ -29,7 +34,7 @@ export default function Cloth() {
 
 
     // TODO: PBD will not work if parent has transforms
-    return <group >
+    return <group onClick={() => remount()}>
         <mesh geometry={cloth.geometry} >
             {/* <meshPhongMaterial color={0xffff00} side={THREE.FrontSide} /> */}
             <meshBasicMaterial map={ROCTexture} side={THREE.FrontSide} />
@@ -39,4 +44,6 @@ export default function Cloth() {
             <meshBasicMaterial map={ROCTexture} side={THREE.BackSide} />
         </mesh>
     </group>
-}
+});
+
+export default Cloth;

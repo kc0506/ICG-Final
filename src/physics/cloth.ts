@@ -101,6 +101,10 @@ export class Cloth extends PBDObject {
         return this.#geometry;
     }
 
+    solveConstraints(): void {
+
+    }
+
     update(): void {
         this.geometry.getAttribute("position").needsUpdate = true;
         this.geometry.computeVertexNormals();

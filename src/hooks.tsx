@@ -1,5 +1,5 @@
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import * as Physics from './physics';
 
 const world = new Physics.World({ numSubsteps: 10 });
@@ -17,9 +17,17 @@ export function usePBDObject<P extends Physics.PBDObject, Args extends any[]>(pb
     // for manually remount
     const [counter, setCounter] = useState(0);
 
+    const ref = useRef<P | null>(null);
     const pbdObject = useMemo(() => {
-        return new pbdObjectClass(...args);
-    }, [counter]);
+        console.log('memo')
+        if (ref.current) {
+            world.remove(ref.current);
+        }
+        const obj = new pbdObjectClass(...args);
+        world.add(obj);
+        return obj;
+    }, [counter])
+    ref.current = pbdObject;
 
     return [pbdObject, () => setCounter(counter + 1)];
 }
