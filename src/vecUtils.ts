@@ -16,7 +16,9 @@ function toArray(v: Vec3): Float32Array | number[] {
 }
 
 export function vecAt(arr: Float32Array, id: number) {
-    return arr.slice(id * 3, id * 3 + 3);
+    // this line will create new array 
+    // fix it so that it returns a view
+    return arr.subarray(id * 3, id * 3 + 3);
 }
 
 export function vecCopy(out: Float32Array, id: number, v: Vec3) {

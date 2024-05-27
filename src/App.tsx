@@ -21,10 +21,10 @@ function Scene() {
 
   useFrame((state, dt) => {
     if (!assertionFail) {
-      world.update(dt, new THREE.Vector3(0, -1, 0));
-      const objs = [...world.objects]
-      if (objs.length === 0) return;
-      console.log(vecAt(objs[0].positionArray, 0))
+      world.update(dt, new THREE.Vector3(0.5, -1, 0));
+      // const objs = [...world.objects]
+      // if (objs.length === 0) return;
+      // console.log(vecAt(objs[0].positionArray, 0))
     }
     else if (!hasPrint) {
       // ? Stop updating when assertion fails
@@ -52,7 +52,7 @@ function Scene() {
 }
 
 function Ground() {
-  return <mesh position={[0, -1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+  return <mesh position={[0, -2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
     <planeGeometry args={[20, 20]} />
     <meshPhongMaterial {... { color: 0xa0adaf, shininess: 150 }} />
   </mesh>

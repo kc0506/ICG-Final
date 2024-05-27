@@ -15,7 +15,7 @@ const Cloth = forwardRef<Physics.Cloth>(function ({ }, ref) {
 
     const world = useWorld();
 
-    const [cloth, remount] = usePBDObject(Physics.Cloth, 6.4, 4.2, { spacing: 0.1, enableCollision: true });
+    const [cloth, remount] = usePBDObject(Physics.Cloth, 3.2, 2.1, { spacing: 0.1, enableCollision: true });
 
     useImperativeHandle(ref, () => {
         return cloth;
