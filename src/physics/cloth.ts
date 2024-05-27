@@ -1,6 +1,7 @@
 
 import { BufferAttribute, BufferGeometry } from "three";
 import { PBDObject } from "./PBDObject";
+import { Constraint, DistanceConstraint } from "./constraint";
 
 export type ClothOptions = {
     spacing: number;
@@ -8,12 +9,13 @@ export type ClothOptions = {
     enableCollision: boolean;
 };
 
+
 export class Cloth extends PBDObject {
     #geometry: BufferGeometry;
 
-    // ? seems not necessary
-    // frontGeometry: BufferGeometry;
-    // backGeometry: BufferGeometry;
+    constraints: Constraint[] = [];
+
+    // distConstraints:    
 
     constructor(width: number, height: number, { spacing, enableCollision }: ClothOptions) {
         const numX = Math.ceil(width / spacing),
@@ -32,9 +34,20 @@ export class Cloth extends PBDObject {
         const velocityArray = new Float32Array(numParticles * 3).fill(0);
         super({ invMass, positionArray, prevPositionArray, velocityArray, enableCollision });
 
-        const triIds: number[] = [];
-        // const edgeIds: number[] = [];
 
+        // * Constraints
+        const stretchConstraints = new DistanceConstraint(2 * numX * numY, invMass, positionArray);
+        for (let i = 0; i < numX; i++) {
+            for (let j = 0; j < numY-1; j++) {
+                stretchConstraints.addConstraint(i * numY + j, i * numY + j + 1);
+                // TODO: horizontal constraints cause crash
+                // stretchConstraints.addConstraint(i * numY + j, (i + 1) * numY + j);
+            }
+        }
+        this.constraints.push(stretchConstraints);
+
+        // * Geometry
+        const triIds: number[] = [];
         for (var i = 0; i < numX; i++) {
             for (var j = 0; j < numY; j++) {
                 var id = i * numY + j;
@@ -57,27 +70,14 @@ export class Cloth extends PBDObject {
             }
         }
 
-        // * UV        
-
         this.#geometry = new BufferGeometry();
         this.#geometry.setAttribute("position", new BufferAttribute(positionArray, 3));
         this.#geometry.setAttribute("uv", new BufferAttribute(this.createUVArray(numX, numY, 'front'), 2));
         this.#geometry.setIndex(triIds);
         this.#geometry.computeVertexNormals();
-
-
-        // this.frontGeometry = new BufferGeometry();
-        // this.frontGeometry.setAttribute("position", new BufferAttribute(positionArray, 3));
-        // this.frontGeometry.setAttribute("uv", new BufferAttribute(this.createUVArray(numX, numY, 'front'), 2));
-        // this.frontGeometry.setIndex(triIds);
-        // this.frontGeometry.computeVertexNormals();
-
-        // this.backGeometry = new BufferGeometry();
-        // this.backGeometry.setAttribute("position", new BufferAttribute(positionArray, 3));
-        // this.backGeometry.setAttribute("uv", new BufferAttribute(this.createUVArray(numX, numY, 'back'), 2));
-        // this.backGeometry.setIndex(triIds);
-        // this.backGeometry.computeVertexNormals();
     }
+
+
 
     createUVArray(numX: number, numY: number, side: 'front' | 'back') {
         const numParticles = numX * numY;
@@ -94,6 +94,7 @@ export class Cloth extends PBDObject {
             }
         }
         return uvArray;
+
     }
 
 
@@ -101,20 +102,15 @@ export class Cloth extends PBDObject {
         return this.#geometry;
     }
 
-    solveConstraints(): void {
-
+    solveConstraints(dt: number): void {
+        for (const constraint of this.constraints) {
+            constraint.solve(dt);
+        }
     }
 
     update(): void {
         this.geometry.getAttribute("position").needsUpdate = true;
         this.geometry.computeVertexNormals();
         this.geometry.computeBoundingSphere();
-
-        // this.frontGeometry.getAttribute("position").needsUpdate = true;
-        // this.frontGeometry.computeVertexNormals();
-        // this.frontGeometry.computeBoundingSphere();
-        // this.backGeometry.getAttribute("position").needsUpdate = true;
-        // this.backGeometry.computeVertexNormals();
-        // this.backGeometry.computeBoundingSphere();
     }
 }

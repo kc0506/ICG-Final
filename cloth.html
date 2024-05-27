@@ -322,7 +322,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 				// constraints
 
-				var numConstraintTypes = 6;
+				var numConstraintTypes = 2;
+				// var numConstraintTypes = 6;
 
 				this.ids = new Int32Array(this.numParticles * numConstraintTypes * 2);
 				this.compliances = new Float32Array(this.numParticles * numConstraintTypes);
@@ -332,7 +333,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 				var stretchCompliance = 0.0;
 				var shearCompliance = 0.0001;
 
-				var compliances = [stretchCompliance, stretchCompliance, shearCompliance, shearCompliance, bendingCompliance, bendingCompliance];
+				// var compliances = [stretchCompliance, stretchCompliance, shearCompliance, shearCompliance, bendingCompliance, bendingCompliance];
+				var compliances = [stretchCompliance, stretchCompliance, Infinity, Infinity, Infinity, Infinity];
 
 				for (var constType = 0; constType < numConstraintTypes; constType++) {
 					for (var i = 0; i < numX; i++) {

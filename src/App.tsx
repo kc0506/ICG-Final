@@ -4,8 +4,8 @@ import * as THREE from 'three';
 import Cloth from './Cloth';
 import { useWorld } from './hooks';
 import { assertionFail } from './utils';
-import { vecAt } from './vecUtils';
-import SoftBody from './SoftBody';
+import { useEffect, useState } from 'react';
+import { useEventListener } from 'usehooks-ts';
 
 export default function App() {
   return (
@@ -18,10 +18,13 @@ export default function App() {
 let hasPrint = false;
 function Scene() {
   const world = useWorld();
+  const [paused, setPaused] = useState(false);
+  useEventListener('blur', () => setPaused(true))
+  useEventListener('focus', () => setPaused(false))
 
   useFrame((state, dt) => {
-    if (!assertionFail) {
-      world.update(dt, new THREE.Vector3(0.5, -1, 0));
+    if (!assertionFail && !paused) {
+      world.update(dt, new THREE.Vector3(0.00, -1.5, 0));
       // const objs = [...world.objects]
       // if (objs.length === 0) return;
       // console.log(vecAt(objs[0].positionArray, 0))
@@ -47,7 +50,7 @@ function Scene() {
     </mesh>}
 
     <Cloth />
-    <SoftBody />
+    {/* <SoftBody /> */}
   </>
 }
 

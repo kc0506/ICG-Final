@@ -15,6 +15,10 @@ function toArray(v: Vec3): Float32Array | number[] {
     return v;
 }
 
+export function vecIsValid(arr: Float32Array, id: number) {
+    return id * 3 < arr.length;
+}
+
 export function vecAt(arr: Float32Array, id: number) {
     // this line will create new array 
     // fix it so that it returns a view
@@ -55,4 +59,9 @@ export function vecSetDiff(out: Float32Array, id: number, a: Vec3, b: Vec3) {
 
 export function vecScale(out: Float32Array, id: number, scale: number) {
     for (let i = 0; i < 3; i++) out[id * 3 + i] *= scale;
+}
+
+export function vecLengthSquared(v: Float32Array, id: number) {
+    v = vecAt(v, id);
+    return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }

@@ -41,6 +41,11 @@ export class World {
                 if (C > 0)
                     continue;
 
+                // const damping = 1.0
+                // vecSetDiff(tmp1, 0, vecAt(obj.positionArray, i), vecAt(obj.prevPositionArray, i));
+                // vecAdd(obj.positionArray, i, tmp1, -damping);
+                // vecAt(obj.positionArray, i)[1] = this.#minDistance - 2;
+
                 // ! this line let bounce working 
                 // ! but I am not sure LOL
                 vecCopy(obj.prevPositionArray, i, vecAt(obj.positionArray, i));
@@ -71,7 +76,7 @@ export class World {
             // 2. Solve constraints
             this.solveCollisions();
             for (let obj of this.objects) {
-                obj.solveConstraints();
+                obj.solveConstraints(subDt);
             }
 
             // 3. Update velocity
@@ -86,7 +91,7 @@ export class World {
                     );
                     vecScale(obj.velocityArray, i, invSubDt);
                     if (vecAt(obj.velocityArray, i)[1] > 0) {
-                        console.log('positive')
+                        // console.log('positive')
                     }
                 }
 
@@ -97,6 +102,9 @@ export class World {
 
                 for (let x of obj.positionArray) {
                     assert(!isNaN(x), "NaN in positionArray");
+                }
+                for (let x of obj.velocityArray) {
+                    assert(!isNaN(x), "NaN in velocityArray");
                 }
                 obj.update();
             }

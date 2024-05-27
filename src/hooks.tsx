@@ -2,7 +2,7 @@
 import { useMemo, useRef, useState } from 'react';
 import * as Physics from './physics';
 
-const world = new Physics.World({ numSubsteps: 10 });
+const world = new Physics.World({ numSubsteps: 50 });
 
 // TODO
 export function useWorld() {

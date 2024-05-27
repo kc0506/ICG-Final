@@ -53,7 +53,7 @@ export class PBDObject {
         return Math.floor(this.positionArray.length / 3);
     }
 
-    solveConstraints() {
+    solveConstraints(dt: number) {
         throw new Error("Method not implemented.");
     }
     update() {
