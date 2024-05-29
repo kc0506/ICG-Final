@@ -119,7 +119,7 @@ export default function Scene() {
     </mesh>}
 
     <Cloth ref={cloth} />
-    {/* <SoftBody /> */}
+    <SoftBody />
     {/* <Test /> */}
   </>
 }

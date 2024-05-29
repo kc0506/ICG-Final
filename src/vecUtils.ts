@@ -65,3 +65,39 @@ export function vecLengthSquared(v: Float32Array, id: number) {
     v = vecAt(v, id);
     return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
+
+export function vecSetCross(out: Float32Array, id: number, a: Vec3, b: Vec3) {
+    a = toArray(a);
+    b = toArray(b);
+    out[id * 3] = a[1] * b[2] - a[2] * b[1];
+    out[id * 3 + 1] = a[2] * b[0] - a[0] * b[2];
+    out[id * 3 + 2] = a[0] * b[1] - a[1] * b[0];
+}
+
+export function vecSetDot(a: Vec3, b: Vec3): number {
+    a = toArray(a);
+    b = toArray(b);
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+} 
+
+export function vecDistSquared(a: Vec3, b: Vec3): number {
+    a = toArray(a);
+    b = toArray(b);
+    let sum = 0;
+    for (let i = 0; i < 3; i++) sum += (a[i] - b[i]) ** 2;
+    return sum;
+}
+
+export function getTetVolume(id: number, tetIds: number[], positionArray: Float32Array): number {
+    const temp = new Float32Array(4 * 3);
+    var id0 = tetIds[4 * id];
+    var id1 = tetIds[4 * id + 1];
+    var id2 = tetIds[4 * id + 2];
+    var id3 = tetIds[4 * id + 3];
+    vecSetDiff(temp,0, vecAt(positionArray, id1), vecAt(positionArray, id0));
+    vecSetDiff(temp,1, vecAt(positionArray, id2), vecAt(positionArray, id0));
+    vecSetDiff(temp,2, vecAt(positionArray, id3), vecAt(positionArray, id0));
+
+    vecSetCross(temp,3, vecAt(temp, 0), vecAt(temp, 1));
+    return vecSetDot(vecAt(temp, 3), vecAt(temp, 2)) / 6.0;
+}

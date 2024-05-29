@@ -1,5 +1,5 @@
 import { assert } from "../utils";
-import { vecAdd, vecAt, vecIsValid, vecLengthSquared, vecScale, vecSetDiff } from "../vecUtils";
+import { vecAdd, vecAt, vecIsValid, vecLengthSquared, vecScale, vecSetDiff, vecSetCross, getTetVolume } from "../vecUtils";
 
 export abstract class Constraint {
     abstract solve(dt: number): void
@@ -157,3 +157,90 @@ export class DistanceConstraint extends Constraint {
         }
     }
 }
+
+export class VolumeConstraint extends Constraint {
+    invMass: Float32Array;
+    positionArray: Float32Array;
+    numTets: number;
+    maxnumOfTets: number;
+    tetIds: number[];
+    restVol: Float32Array;
+    volCompliance: number;
+    temp: Float32Array;
+    grads: Float32Array;
+    volIdOrder: number[][];
+
+    constructor(maxnumOfTets: number, volCompliance: number=0.0, invMass: Float32Array, positionArray: Float32Array) {
+        super();
+        this.invMass = invMass;
+        this.positionArray = positionArray;
+        this.numTets = 0;
+        this.maxnumOfTets = maxnumOfTets;
+        this.tetIds = new Array(maxnumOfTets * 4).fill(-1);
+        this.restVol = new Float32Array(maxnumOfTets);
+        this.volCompliance = volCompliance;
+
+        this.temp = new Float32Array(4 * 3);
+        this.grads = new Float32Array(4 * 3);
+        this.volIdOrder = [[1,3,2], [0,2,3], [0,3,1], [0,1,2]];
+    }
+
+    addConstraint(id0: number, id1: number, id2: number, id3: number, vol: number) {
+        const i = this.numTets;
+        if (i >= this.maxnumOfTets) {
+            throw new Error("Constraint array is full");
+        }
+        this.tetIds[4 * i] = id0;
+        this.tetIds[4 * i + 1] = id1;
+        this.tetIds[4 * i + 2] = id2;
+        this.tetIds[4 * i + 3] = id3;
+        this.restVol[i] = vol;
+        this.numTets++;
+    }
+
+    solve(dt: number): void {
+        const alpha = this.volCompliance / (dt * dt);
+        
+        for (let i=0; i<this.numTets; i++) {
+            if (this.tetIds[4 * i] === -1) continue;
+
+            var w = 0.0;
+
+            for (let j=0; j<4; j++) {
+                const id0 = this.tetIds[4 * i + this.volIdOrder[j][0]];
+                const id1 = this.tetIds[4 * i + this.volIdOrder[j][1]];
+                const id2 = this.tetIds[4 * i + this.volIdOrder[j][2]];
+                // console.log(id0, id1, id2);
+
+                vecSetDiff(this.temp, 0, vecAt(this.positionArray, id1), vecAt(this.positionArray, id0));
+                vecSetDiff(this.temp, 1, vecAt(this.positionArray, id2), vecAt(this.positionArray, id0));
+                vecSetCross(this.grads, j, vecAt(this.temp, 0), vecAt(this.temp, 1));
+                vecScale(this.grads, j, 1.0 / 6.0);
+
+                // const dw = this.invMass[this.tetIds[4 * i + j]] * vecLengthSquared(this.grads, j);
+                // if (isNaN(dw)) {
+                //     console.log(id0, id1, id2);
+                //     console.log(this.grads);
+                //     console.log(this.invMass[4*i+j]);
+                //     console.log(this.invMass.length);
+                // }
+                // // assert(!isNaN(dw), "NaN in softbody dw"+i);
+                w += this.invMass[this.tetIds[4 * i + j]] * vecLengthSquared(this.grads, j);
+            }
+            if (w == 0.0) continue;
+
+            const vol = getTetVolume(i, this.tetIds, this.positionArray);
+            const restVol = this.restVol[i];
+            const C = vol - restVol;
+            const lambda = - C / (w + alpha);
+
+            // assert((!isNaN(lambda) && !isNaN(vol) && !isNaN(C) && !isNaN(w)), lambda+"-"+vol+"-"+C+"-"+w+"-"+i);
+
+            for (let j=0; j<4; j++) {
+                const id = this.tetIds[4 * i + j];
+                vecAdd(this.positionArray, id, vecAt(this.grads, j), lambda * this.invMass[id]);
+            }
+        }
+    }
+}
+
