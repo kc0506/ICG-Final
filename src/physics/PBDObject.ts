@@ -8,6 +8,9 @@ export type PBDObjectProps = {
     positionArray: Float32Array;
     velocityArray: Float32Array;
 
+} & PBDObjectOptions;
+
+export type PBDObjectOptions = {
     enableCollision: boolean;
 };
 
@@ -23,7 +26,10 @@ export class PBDObject {
     parentVelocity: Vector3;
 
 
-    #enableCollision;
+    #initialPositionArray: Float32Array;
+    #initialVelocityArray: Float32Array;
+
+    enableCollision;
     constructor({
         invMass,
         prevPositionArray,
@@ -32,7 +38,7 @@ export class PBDObject {
 
         enableCollision,
     }: PBDObjectProps) {
-        this.#enableCollision = enableCollision;
+        this.enableCollision = enableCollision;
 
         this.invMass = invMass;
         this.prevPositionArray = prevPositionArray;
@@ -47,6 +53,9 @@ export class PBDObject {
         // consider pass parent in
         this.parentPosition = new Vector3();
         this.parentVelocity = new Vector3();
+
+        this.#initialPositionArray = new Float32Array(positionArray);
+        this.#initialVelocityArray = new Float32Array(velocityArray);
     }
 
     get numParticles() {
@@ -58,5 +67,10 @@ export class PBDObject {
     }
     update() {
         throw new Error("Method not implemented.");
+    }
+
+    reset() {
+        this.positionArray.set(this.#initialPositionArray);
+        this.velocityArray.set(this.#initialVelocityArray);
     }
 }

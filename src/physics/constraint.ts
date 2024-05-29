@@ -6,6 +6,11 @@ export abstract class Constraint {
 }
 
 
+type DistanceConstraintOptions = {
+    initialPositions?: Float32Array,
+    compliance?: number,
+}
+
 export class DistanceConstraint extends Constraint {
     #vecs = new Float32Array(2 * 3);
 
@@ -13,44 +18,72 @@ export class DistanceConstraint extends Constraint {
     positionArray: Float32Array
     initialPositions: Float32Array;
 
-    #cnt = 0;
+
+    #numConstraints = 0;
     ids: Uint32Array;
     restLens: Float32Array;
+    compliance: number;
 
-    constructor(maxNumConstraints: number, invMass: Float32Array, positionArray: Float32Array) {
+    constructor(
+        maxNumConstraints: number,
+        invMass: Float32Array,
+        positionArray: Float32Array,
+        options: DistanceConstraintOptions = {},
+    ) {
+
+        let {
+            initialPositions,
+            compliance = 0.0,
+        } = options;
+
         super();
         this.invMass = invMass;
         this.positionArray = positionArray;
-        this.initialPositions = positionArray.slice();
+        if (!initialPositions)
+            initialPositions = positionArray.slice();
+
+        this.initialPositions = initialPositions;
 
         this.ids = new Uint32Array(maxNumConstraints * 2).fill(-1);
-        this.restLens = new Float32Array(maxNumConstraints);
+        this.restLens = new Float32Array(maxNumConstraints).fill(-1);
+        this.compliance = compliance;
 
-        console.log(positionArray.length)
+        // console.log(positionArray.length)
     }
 
     addConstraint(id0: number, id1: number) {
-        if (!vecIsValid(this.positionArray, id0) || !vecIsValid(this.positionArray, id1))
+        if (!vecIsValid(this.positionArray, id0) || !vecIsValid(this.positionArray, id1)) {
             return;
-        // console.log('addConstraint', id0, id1)
+        }
 
-        if (this.#cnt >= this.ids.length / 2) {
+        if (this.#numConstraints >= this.ids.length / 2) {
             throw new Error("Constraint array is full");
         }
 
-        this.ids[this.#cnt * 2] = id0;
-        this.ids[this.#cnt * 2 + 1] = id1;
+        this.ids[this.#numConstraints * 2] = id0;
+        this.ids[this.#numConstraints * 2 + 1] = id1;
 
-        const pos1 = vecAt(this.positionArray, id0);
-        const pos2 = vecAt(this.positionArray, id1);
+        const pos1 = vecAt(this.initialPositions, id0);
+        const pos2 = vecAt(this.initialPositions, id1);
         vecSetDiff(this.#vecs, 0, pos1, pos2);
-        this.restLens[this.#cnt] = Math.sqrt(vecLengthSquared(this.#vecs, 0));
+        this.restLens[this.#numConstraints] = Math.sqrt(vecLengthSquared(this.#vecs, 0));
 
-        this.#cnt++;
+        this.#numConstraints++;
+    }
+
+
+    suffle() {
+        for (let i = 0; i < this.numConstraints; i++) {
+            const j = Math.floor(Math.random() * this.#numConstraints);
+            let temp;
+            temp = this.ids[i * 2], this.ids[i * 2] = this.ids[j * 2], this.ids[j * 2] = temp;
+            temp = this.ids[i * 2 + 1], this.ids[i * 2 + 1] = this.ids[j * 2 + 1], this.ids[j * 2 + 1] = temp;
+            temp = this.restLens[i], this.restLens[i] = this.restLens[j], this.restLens[j] = temp;
+        }
     }
 
     get numConstraints() {
-        return this.#cnt;
+        return this.#numConstraints;
     }
 
     solve(dt: number): void {
@@ -72,13 +105,27 @@ export class DistanceConstraint extends Constraint {
                 continue;
 
             const restLen = this.restLens[i];
-            const C = len - restLen;
-            // TODO: add compliance
-            // const alpha = 0.00 / dt / dt;
-            // const s = -C / (w + alpha);
-            const s = -C / w;
-            try {
+            assert(Math.abs(restLen - 0.1) < 1e6)
 
+
+            // TODO: add compliance
+            const alpha = this.compliance / dt / dt;
+            const C = len - restLen;
+            // const s = -C / w;
+            const s = -C / (w + alpha);
+
+            const numX = 32;
+            const numY = 21;
+
+            if (Math.abs(C) <= 0.001)
+                continue
+
+            if (id0 % numY === id1 % numY && Math.abs(C) > 0) {
+                // console.log(id0 / numY, id1 / numY, 'C=', C)
+                // console.log(s)
+            }
+
+            try {
                 assert(!isNaN(s))
             } catch (e) {
                 console.log(id0, id1)
@@ -94,7 +141,6 @@ export class DistanceConstraint extends Constraint {
             vecAdd(this.positionArray, id0, diff, s * w0);
             vecAdd(this.positionArray, id1, diff, -s * w1);
             try {
-
                 for (let i = 0; i < 3; i++) {
                     assert(!isNaN(vecAt(this.positionArray, id0)[i]))
                 }

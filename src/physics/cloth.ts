@@ -1,13 +1,13 @@
 
 import { BufferAttribute, BufferGeometry } from "three";
-import { PBDObject } from "./PBDObject";
+import { PBDObject, PBDObjectOptions } from "./PBDObject";
 import { Constraint, DistanceConstraint } from "./constraint";
 
 export type ClothOptions = {
     spacing: number;
     // initialPositions: Float32Array;
-    enableCollision: boolean;
-};
+    // enableCollision: boolean;
+} & PBDObjectOptions;
 
 
 export class Cloth extends PBDObject {
@@ -17,7 +17,7 @@ export class Cloth extends PBDObject {
 
     // distConstraints:    
 
-    constructor(width: number, height: number, { spacing, enableCollision }: ClothOptions) {
+    constructor(width: number, height: number, { spacing, ...options }: ClothOptions) {
         const numX = Math.ceil(width / spacing),
             numY = Math.ceil(height / spacing);
 
@@ -26,25 +26,52 @@ export class Cloth extends PBDObject {
         for (let i = 0; i < numX; i++) {
             for (let j = 0; j < numY; j++) {
                 const id = i * numY + j;
-                positionArray.set([i * spacing, j * spacing, 0], 3 * id);
+                const x = i * spacing - width / 2
+                const y = j * spacing - 1.5;
+                const z = 0.1 * Math.random() - 0.05;
+                positionArray.set([x, y, z], 3 * id);
             }
         }
         const invMass = new Float32Array(numParticles).fill(1);
         const prevPositionArray = new Float32Array(numParticles * 3);
         const velocityArray = new Float32Array(numParticles * 3).fill(0);
-        super({ invMass, positionArray, prevPositionArray, velocityArray, enableCollision });
+        super({
+            invMass, positionArray, prevPositionArray, velocityArray, ...options
+        });
 
 
         // * Constraints
-        const stretchConstraints = new DistanceConstraint(2 * numX * numY, invMass, positionArray);
+        const addConstraint = (constraint: DistanceConstraint, i1: number, j1: number, i2: number, j2: number) => {
+            if (i1 < 0 || i1 >= numX || j1 < 0 || j1 >= numY)
+                return;
+            constraint.addConstraint(i1 * numY + j1, i2 * numY + j2);
+        }
+
+        const maxNumConstraints = 2 * numX * numY;
+        const stretchConstraints = new DistanceConstraint(maxNumConstraints, invMass, positionArray);
+        const shearConstraints = new DistanceConstraint(maxNumConstraints, invMass, positionArray, { compliance: 0.001 });
+        const bendConstraints = new DistanceConstraint(maxNumConstraints, invMass, positionArray, { compliance: 1 });
+
         for (let i = 0; i < numX; i++) {
-            for (let j = 0; j < numY-1; j++) {
-                stretchConstraints.addConstraint(i * numY + j, i * numY + j + 1);
-                // TODO: horizontal constraints cause crash
-                // stretchConstraints.addConstraint(i * numY + j, (i + 1) * numY + j);
+            for (let j = 0; j < numY - 1; j++) {
+                addConstraint(stretchConstraints, i, j, i, j + 1);
+                addConstraint(stretchConstraints, i, j, i + 1, j);
+
+                addConstraint(shearConstraints, i, j, i + 1, j + 1);
+                addConstraint(shearConstraints, i + 1, j, i, j + 1);
+
+                addConstraint(bendConstraints, i, j, i + 2, j);
+                addConstraint(bendConstraints, i, j, i, j + 2);
             }
         }
+        stretchConstraints.suffle();
+        shearConstraints.suffle();
+        bendConstraints.suffle();
+
         this.constraints.push(stretchConstraints);
+        this.constraints.push(shearConstraints);
+        this.constraints.push(bendConstraints);
+
 
         // * Geometry
         const triIds: number[] = [];

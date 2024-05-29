@@ -15,7 +15,7 @@ const Cloth = forwardRef<Physics.Cloth>(function ({ }, ref) {
 
     const world = useWorld();
 
-    const [cloth, remount] = usePBDObject(Physics.Cloth, 3.2, 2.1, { spacing: 0.1, enableCollision: true });
+    const [cloth, remount] = usePBDObject(Physics.Cloth, 3.2, 4.2, { spacing: 0.2, enableCollision: true });
 
     useImperativeHandle(ref, () => {
         return cloth;
@@ -35,13 +35,13 @@ const Cloth = forwardRef<Physics.Cloth>(function ({ }, ref) {
 
     // TODO: PBD will not work if parent has transforms
     return <group onClick={() => remount()}>
-        <mesh geometry={cloth.geometry} >
+        <mesh geometry={cloth.geometry} castShadow>
             {/* <meshPhongMaterial color={0xffff00} side={THREE.FrontSide} /> */}
-            <meshBasicMaterial map={ROCTexture} side={THREE.FrontSide} />
+            <meshPhongMaterial map={ROCTexture} side={THREE.FrontSide} />
         </mesh>
         <mesh geometry={cloth.geometry}>
             {/* <meshPhongMaterial color={0x00ff00} side={THREE.BackSide} /> */}
-            <meshBasicMaterial map={ROCTexture} side={THREE.BackSide} />
+            <meshPhongMaterial map={ROCTexture} side={THREE.BackSide} />
         </mesh>
     </group>
 });

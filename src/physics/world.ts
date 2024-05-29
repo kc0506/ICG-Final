@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { assert } from "../utils";
 import { vecAdd, vecAt, vecCopy, vecScale, vecSetDiff, vecSub } from "../vecUtils";
 import { PBDObject } from "./PBDObject";
+import { solveCollisions } from "./collision";
 
 type WorldProps = {
     numSubsteps: number;
@@ -28,10 +29,12 @@ export class World {
         // C(x,y,z) = y - minDistance
         // del C = (0, 1, 0)
         // dx = -(y - d) * (0, 1, 0)
-        const tmp = vecAt(this.#tmpVecs, 0);
-        tmp.set([0, 1, 0]);
+        const normal = vecAt(this.#tmpVecs, 0);
+        normal.set([0, 1, 0]);
+
         const tmp1 = vecAt(this.#tmpVecs, 1);
 
+        let flag = false
         for (let obj of this.objects) {
             for (let i = 0; i < obj.numParticles; i++) {
                 if (obj.invMass[i] === 0) continue;
@@ -40,17 +43,17 @@ export class World {
                 const C = pos[1] + 2 - this.#minDistance;
                 if (C > 0)
                     continue;
+                flag = true
 
-                // const damping = 1.0
-                // vecSetDiff(tmp1, 0, vecAt(obj.positionArray, i), vecAt(obj.prevPositionArray, i));
-                // vecAdd(obj.positionArray, i, tmp1, -damping);
-                // vecAt(obj.positionArray, i)[1] = this.#minDistance - 2;
+                const damping = 1.0
+                vecSetDiff(tmp1, 0, vecAt(obj.positionArray, i), vecAt(obj.prevPositionArray, i));
+                vecAdd(obj.positionArray, i, tmp1, -damping);
+                vecAt(obj.positionArray, i)[1] = this.#minDistance - 2;
 
                 // ! this line let bounce working 
                 // ! but I am not sure LOL
-                vecCopy(obj.prevPositionArray, i, vecAt(obj.positionArray, i));
-
-                vecAdd(obj.positionArray, i, tmp, -C);
+                // vecCopy(obj.prevPositionArray, i, vecAt(obj.positionArray, i));
+                // vecAdd(obj.positionArray, i, tmp, -C);
             }
         }
     }
@@ -78,6 +81,7 @@ export class World {
             for (let obj of this.objects) {
                 obj.solveConstraints(subDt);
             }
+            solveCollisions(this.objects, this.#minDistance);
 
             // 3. Update velocity
             const invSubDt = 1 / subDt;
@@ -94,11 +98,6 @@ export class World {
                         // console.log('positive')
                     }
                 }
-
-                // console.log("log", 1 / subDt);
-                // console.log(obj.positionArray);
-                // console.log(obj.prevPositionArray);
-                // console.log(obj.velocityArray);
 
                 for (let x of obj.positionArray) {
                     assert(!isNaN(x), "NaN in positionArray");

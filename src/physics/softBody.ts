@@ -1,5 +1,5 @@
 import { BufferAttribute, BufferGeometry } from "three";
-import { PBDObject } from "./PBDObject";
+import { PBDObject, PBDObjectOptions } from "./PBDObject";
 
 type Model = {
     verts: number[];
@@ -17,7 +17,7 @@ export class SoftBody extends PBDObject {
     }
 
 
-    constructor(model: Model) {
+    constructor(model: Model, options: PBDObjectOptions) {
 
         const positionArray = new Float32Array(model.verts);
         const numParticles = model.verts.length / 3;
@@ -30,7 +30,7 @@ export class SoftBody extends PBDObject {
             positionArray,
             prevPositionArray,
             velocityArray,
-            enableCollision: false
+            ...options,
         });
 
         this.#geometry = new BufferGeometry();

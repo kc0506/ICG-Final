@@ -323,7 +323,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 				// constraints
 
 				var numConstraintTypes = 2;
-				// var numConstraintTypes = 6;
 
 				this.ids = new Int32Array(this.numParticles * numConstraintTypes * 2);
 				this.compliances = new Float32Array(this.numParticles * numConstraintTypes);
@@ -333,8 +332,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 				var stretchCompliance = 0.0;
 				var shearCompliance = 0.0001;
 
-				// var compliances = [stretchCompliance, stretchCompliance, shearCompliance, shearCompliance, bendingCompliance, bendingCompliance];
-				var compliances = [stretchCompliance, stretchCompliance, Infinity, Infinity, Infinity, Infinity];
+				var compliances = [stretchCompliance, stretchCompliance, shearCompliance, shearCompliance, bendingCompliance, bendingCompliance];
 
 				for (var constType = 0; constType < numConstraintTypes; constType++) {
 					for (var i = 0; i < numX; i++) {
@@ -358,12 +356,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 				this.numConstraints = Math.floor(num / 2);
 
-				for (var i = 0; i < this.numConstraints; i++) {
-					var j = i + Math.floor(Math.random() * (this.numConstraints - i));
-					var c = this.compliances[i]; this.compliances[i] = this.compliances[j]; this.compliances[j] = c;
-					var id = this.ids[2 * i]; this.ids[2 * i] = this.ids[2 * j]; this.ids[2 * j] = id;
-					id = this.ids[2 * i + 1]; this.ids[2 * i + 1] = this.ids[2 * j + 1]; this.ids[2 * j + 1] = id;
-				}
+				// for (var i = 0; i < this.numConstraints; i++) {
+				// 	var j = i + Math.floor(Math.random() * (this.numConstraints - i));
+				// 	var c = this.compliances[i]; this.compliances[i] = this.compliances[j]; this.compliances[j] = c;
+				// 	var id = this.ids[2 * i]; this.ids[2 * i] = this.ids[2 * j]; this.ids[2 * j] = id;
+				// 	id = this.ids[2 * i + 1]; this.ids[2 * i + 1] = this.ids[2 * j + 1]; this.ids[2 * j + 1] = id;
+				// }
 
 				// pre-compute rest lengths
 
@@ -422,7 +420,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 				geometry.setIndex(edgeIds);
 				var lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 2 });
 				this.edgeMesh = new THREE.LineSegments(geometry, lineMaterial);
-				this.edgeMesh.visible = true;
+				this.edgeMesh.visible = false;
 				scene.add(this.edgeMesh);
 
 				this.updateVisMeshes();
@@ -459,10 +457,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 					this.solveGroundCollisions();
 
-					this.solveConstraints(dt);
 					if (this.handleCollisions)
 						this.solveCollisions(dt);
 
+					this.solveConstraints(dt);
 					// update velocities
 
 					for (var i = 0; i < this.numParticles; i++) {
@@ -514,6 +512,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 			}
 
 			solveCollisions(dt) {
+				dt = Infinity;
 
 				var thickness2 = this.thickness * this.thickness;
 
@@ -535,35 +534,36 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 						var dist2 = vecLengthSquared(this.vecs, 0);
 						if (dist2 > thickness2 || dist2 == 0.0)
 							continue;
-						var restDist2 = vecDistSquared(this.restPos, id0, this.restPos, id1);
+						// var restDist2 = vecDistSquared(this.restPos, id0, this.restPos, id1);
 
 						var minDist = this.thickness;
-						if (dist2 > restDist2)
-							continue;
-						if (restDist2 < thickness2)
-							minDist = Math.sqrt(restDist2);
+						// if (dist2 > restDist2)
+						// 	continue;
+						// if (restDist2 < thickness2)
+						// 	minDist = Math.sqrt(restDist2);
 
+						// continue;
 						// position correction
 						var dist = Math.sqrt(dist2);
 						vecScale(this.vecs, 0, (minDist - dist) / dist);
 						vecAdd(this.pos, id0, this.vecs, 0, -0.5);
 						vecAdd(this.pos, id1, this.vecs, 0, 0.5);
 
-						// velocities
-						vecSetDiff(this.vecs, 0, this.pos, id0, this.prevPos, id0);
-						vecSetDiff(this.vecs, 1, this.pos, id1, this.prevPos, id1);
+						// // velocities
+						// vecSetDiff(this.vecs,0, this.pos,id0, this.prevPos, id0);
+						// vecSetDiff(this.vecs,1, this.pos,id1, this.prevPos, id1);
 
-						// average velocity
-						vecSetSum(this.vecs, 2, this.vecs, 0, this.vecs, 1, 0.5);
+						// // average velocity
+						// vecSetSum(this.vecs,2, this.vecs,0, this.vecs,1, 0.5);
 
-						// velocity corrections
-						vecSetDiff(this.vecs, 0, this.vecs, 2, this.vecs, 0);
-						vecSetDiff(this.vecs, 1, this.vecs, 2, this.vecs, 1);
+						// // velocity corrections
+						// vecSetDiff(this.vecs,0, this.vecs,2, this.vecs,0);
+						// vecSetDiff(this.vecs,1, this.vecs,2, this.vecs,1);
 
-						// add corrections
-						var friction = 0.0;
-						vecAdd(this.pos, id0, this.vecs, 0, friction);
-						vecAdd(this.pos, id1, this.vecs, 1, friction);
+						// // add corrections
+						// var friction = 0.0;
+						// vecAdd(this.pos,id0, this.vecs,0, friction);
+						// vecAdd(this.pos,id1, this.vecs,1, friction);
 					}
 				}
 			}
@@ -724,8 +724,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 		}
 
 		function initPhysics(triIds) {
-			var spacing = 0.01;
-			var thickness = 0.01;
+			var spacing = 0.1;
+			var thickness = 0.1;
 			var numX = 30;
 			var numY = 200;
 
