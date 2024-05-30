@@ -85,10 +85,7 @@ export class SoftBody extends PBDObject {
     solveConstraints(dt: number): void {
         this.edgeConstraint.solve(dt);
         this.volConstraint.solve(dt);
-        for (let i = 0; i < this.numParticles; i++) {
-            // console.log(this.positionArray[3* i + 1]);
-        }
-        // this.solveVolumeConstraint(dt, this.volCompliance);
+
         // console.log(this.positionArray);
         // for (let x of this.positionArray) {
             // assert(Math.abs(x) < 10.0, "NaN in softbody positionArray"+this.positionArray);

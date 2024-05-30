@@ -18,8 +18,8 @@ const SoftBody = forwardRef<Physics.SoftBody>(function ({ }, ref) {
     });
 
     return <>
-        <mesh geometry={bunny.geometry} position={[0, 1, 0]}>
-            <meshPhongMaterial color={0xff0000} />
+        <mesh geometry={bunny.geometry} position={[0, 0, 0]}>
+            <meshPhongMaterial color={0x0000ff} />
         </mesh>
     </>
 
