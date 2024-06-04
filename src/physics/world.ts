@@ -70,7 +70,8 @@ export class World {
             // const maxVelocity = 0.2 * this.#minDistance / dt;
             for (let obj of this.objects) {
                 for (let i = 0; i < obj.numParticles; i++) {
-                    vecAdd(obj.velocityArray, i, force, subDt * obj.invMass[i]);
+                    if (obj.invMass[i] === 0) continue; // handle fixed particles
+                    vecAdd(obj.velocityArray, i, force, subDt);
                     vecCopy(obj.prevPositionArray, i, vecAt(obj.positionArray, i));
                     vecAdd(obj.positionArray, i, vecAt(obj.velocityArray, i), subDt);
                 }

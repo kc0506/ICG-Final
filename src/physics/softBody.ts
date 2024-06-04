@@ -1,9 +1,8 @@
 import { BufferAttribute, BufferGeometry } from "three";
 import { PBDObject } from "./PBDObject";
 import { getTetVolume } from "../vecUtils";
-import { Constraint, DistanceConstraint, VolumeConstraint } from "./constraint";
+import { DistanceConstraint, VolumeConstraint } from "./constraint";
 import { assert } from "../utils";
-import { is } from "@react-three/fiber/dist/declarations/src/core/utils";
 
 type Model = {
     verts: number[];
@@ -30,7 +29,7 @@ export class SoftBody extends PBDObject {
     edgeConstraint: DistanceConstraint;
     volConstraint: VolumeConstraint;
 
-    constructor(model: Model, edgeCompliance: number=100.0, volCompliance: number=0.0) {
+    constructor(model: Model, edgeCompliance: number=100.0, volCompliance: number=100.0) {
 
         const positionArray = new Float32Array(model.verts);
         const numParticles = model.verts.length / 3;
@@ -64,11 +63,11 @@ export class SoftBody extends PBDObject {
         }
         
         this.volConstraint = new VolumeConstraint(this.numTets, volCompliance, this.invMass, this.positionArray);
-        for (var i = 0; i < this.numTets; i++) {
-            var vol = getTetVolume(i, this.tetIds, this.positionArray);
+        for (let i = 0; i < this.numTets; i++) {
+            const vol = getTetVolume(i, this.tetIds, this.positionArray);
             this.volConstraint.addConstraint(this.tetIds[4 * i], this.tetIds[4 * i + 1], this.tetIds[4 * i + 2], this.tetIds[4 * i + 3], vol);
-            var pInvMass = vol > 0.0 ? 1.0 / (vol / 4.0) : 0.0;
-            pInvMass /= 1000000.0;
+            const pInvMass = vol > 0.0 ? 1.0 / (vol / 4.0) : 0.0;
+            // pInvMass /= 1000000.0;
             this.invMass[this.tetIds[4 * i]] += pInvMass;
             this.invMass[this.tetIds[4 * i + 1]] += pInvMass;
             this.invMass[this.tetIds[4 * i + 2]] += pInvMass;

@@ -8,6 +8,7 @@ import { assertionFail } from './utils';
 import { Test } from './TestBall';
 import { useUpdateMode } from './store';
 import Cloth from './Cloth';
+import TriplePendulum from './Pendulum';
 
 
 function Ground() {
@@ -107,6 +108,20 @@ export default function Scene() {
     }
   })
 
+  const bunny = useRef<Physics.SoftBody>(null!);
+  useEventListener('keypress', (e) => {
+    if (e.key === 'r') {
+      bunny.current.reset();
+    }
+  })
+
+  const triplePendulum = useRef<Physics.Pendulum>(null!);
+  useEventListener('keypress', (e) => {
+    if (e.key === 'r') {
+      triplePendulum.current.reset();
+    }
+  })
+
   return <>
     <PerspectiveCamera makeDefault position={[0, 0, 10]} />
     <OrbitControls />
@@ -118,8 +133,9 @@ export default function Scene() {
       <meshPhongMaterial color={0xff0000} />
     </mesh>}
 
-    <Cloth ref={cloth} />
-    <SoftBody />
+    {/* <Cloth ref={cloth} /> */}
+    {/* <SoftBody ref={bunny} /> */}
     {/* <Test /> */}
+    <TriplePendulum ref={triplePendulum} />
   </>
 }

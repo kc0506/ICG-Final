@@ -199,7 +199,7 @@ export class VolumeConstraint extends Constraint {
     }
 
     solve(dt: number): void {
-        const alpha = this.volCompliance / (dt * dt);
+        const alpha = this.volCompliance / (dt * dt) / 20000.0;
         
         for (let i=0; i<this.numTets; i++) {
             if (this.tetIds[4 * i] === -1) continue;
