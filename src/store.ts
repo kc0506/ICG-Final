@@ -7,10 +7,13 @@ const initialUpdateMode: UpdateMode = localStorage.getItem('mode') as UpdateMode
 type Store = {
     mode: UpdateMode,
     changeMode: (mode: UpdateMode) => void
+    isHover: boolean,
+    updateHover: (isHover: boolean) => void,
 }
 
-export const useUpdateMode = create<Store>((set) => ({
+export const useGlobalStore = create<Store>((set) => ({
     mode: initialUpdateMode,
     changeMode: (mode: UpdateMode) => set({ mode }),
+    isHover: false,
+    updateHover: (isHover: boolean) => set({ isHover }),
 }))
-
