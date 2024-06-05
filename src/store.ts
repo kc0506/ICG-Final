@@ -14,3 +14,16 @@ export const useUpdateMode = create<Store>((set) => ({
     changeMode: (mode: UpdateMode) => set({ mode }),
 }))
 
+type UpdateShowWire = 'body' | 'wire';
+
+const initialShowWire: UpdateShowWire = localStorage.getItem('wireframe') as UpdateShowWire || 'body';
+
+type StoreWire = {
+    wireframe: UpdateShowWire,
+    changeWire: (mode: UpdateShowWire) => void
+}
+
+export const useUpdateShowWire = create<StoreWire>((set) => ({
+    wireframe: initialShowWire,
+    changeWire: (mode: UpdateShowWire) => set({ wireframe: mode}),
+}))

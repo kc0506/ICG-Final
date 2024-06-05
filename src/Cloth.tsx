@@ -7,6 +7,8 @@ import * as Physics from './physics';
 import ROC from './assets/ROC.png';
 import JP from './assets/JP.png';
 import { forwardRef, useImperativeHandle } from 'react';
+import { useUpdateShowWire } from './store';
+
 const ROCTexture = new THREE.TextureLoader().load(ROC);
 // const ROCTexture = new THREE.TextureLoader().load(JP);
 ROCTexture.repeat.set(1, 1);
@@ -20,6 +22,8 @@ const Cloth = forwardRef<Physics.Cloth>(function ({ }, ref) {
     useImperativeHandle(ref, () => {
         return cloth;
     });
+
+    const { wireframe } = useUpdateShowWire();
 
     // const cloth = useMemo(() => {
     //     console.log('hi')
@@ -37,11 +41,11 @@ const Cloth = forwardRef<Physics.Cloth>(function ({ }, ref) {
     return <group onClick={() => remount()}>
         <mesh geometry={cloth.geometry} castShadow>
             {/* <meshPhongMaterial color={0xffff00} side={THREE.FrontSide} /> */}
-            <meshPhongMaterial map={ROCTexture} side={THREE.FrontSide} />
+            <meshPhongMaterial map={ROCTexture} side={THREE.FrontSide} wireframe={wireframe==='wire'}/>
         </mesh>
         <mesh geometry={cloth.geometry}>
             {/* <meshPhongMaterial color={0x00ff00} side={THREE.BackSide} /> */}
-            <meshPhongMaterial map={ROCTexture} side={THREE.BackSide} />
+            <meshPhongMaterial map={ROCTexture} side={THREE.BackSide} wireframe={wireframe==='wire'} />
         </mesh>
     </group>
 });

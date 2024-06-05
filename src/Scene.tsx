@@ -1,14 +1,17 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useRef, useState } from 'react';
+import React from 'react';
 import * as THREE from 'three';
 import { useEventListener } from 'usehooks-ts';
 import { useWorld } from './hooks';
 import { assertionFail } from './utils';
 import { Test } from './TestBall';
-import { useUpdateMode } from './store';
+import { useUpdateMode, useUpdateShowFramework } from './store';
 import Cloth from './Cloth';
 import TriplePendulum from './Pendulum';
+import * as Physics from './physics';
+import SoftBody from './SoftBody';
 
 
 function Ground() {
@@ -62,9 +65,6 @@ const gravity = new THREE.Vector3(0.00, -2.5, 0);
 //   console.log(e)
 // })
 
-import * as Physics from './physics';
-import SoftBody from './SoftBody';
-
 let hasPrint = false;
 export default function Scene() {
   const world = useWorld();
@@ -115,10 +115,20 @@ export default function Scene() {
     }
   })
 
-  const triplePendulum = useRef<Physics.Pendulum>(null!);
+
+  // const triplePendulum = useRef<Physics.Pendulum>(null!);
+  const pendulumsRef = useRef<React.RefObject<Physics.Pendulum>[]>([
+    React.createRef<Physics.Pendulum>(),
+    React.createRef<Physics.Pendulum>(),
+    React.createRef<Physics.Pendulum>()
+  ]);
   useEventListener('keypress', (e) => {
     if (e.key === 'r') {
-      triplePendulum.current.reset();
+      pendulumsRef.current.forEach((ref) => {
+        if (ref.current) {
+          ref.current.reset();
+        }
+      });
     }
   })
 
@@ -133,9 +143,11 @@ export default function Scene() {
       <meshPhongMaterial color={0xff0000} />
     </mesh>}
 
-    {/* <Cloth ref={cloth} /> */}
-    {/* <SoftBody ref={bunny} /> */}
+    <Cloth ref={cloth} />
+    <SoftBody ref={bunny} />
     {/* <Test /> */}
-    <TriplePendulum ref={triplePendulum} />
+    <TriplePendulum ref={pendulumsRef.current[0]} pos={[2, 2.5, 0.0]} mass={[1.0, 2.0, 1.5]} length={[0.5, 1, 0.7]} color={"#FF5151"} dir={0} />
+    <TriplePendulum ref={pendulumsRef.current[1]} pos={[0, 2.5, 0.0]} mass={[1.0, 0.7, 0.5]} length={[1, 0.5, 0.7]} color={"#00E3E3"} dir={2} />
+    <TriplePendulum ref={pendulumsRef.current[2]} pos={[-2, 2.5, 0.0]} mass={[0.7, 1.5, 2]} length={[0.8, 0.7, 0.6]} color={"#FFFF37"} dir={0} />
   </>
 }
