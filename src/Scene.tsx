@@ -3,12 +3,11 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useEventListener } from 'usehooks-ts';
-import { useWorld } from './hooks';
-import { assertionFail } from './utils';
-import { Test } from './TestBall';
-import { useGlobalStore } from './store';
 import Cloth from './Cloth';
-import TriplePendulum from './Pendulum';
+import { useWorld } from './hooks';
+import * as Physics from './physics';
+import { useGlobalStore } from './store';
+import { assertionFail } from './utils';
 
 
 function Ground() {
@@ -64,10 +63,7 @@ const gravity = new THREE.Vector3(0.00, -2.9, 0);
 //   console.log(e)
 // })
 
-import * as Physics from './physics';
-import SoftBody from './SoftBody';
-import { useTrajectoryStore } from './trajectory';
-import { vecAdd, vecAt, vecCopy } from './vecUtils';
+import { vecAt } from './vecUtils';
 
 
 let hasSetConstraint = false;

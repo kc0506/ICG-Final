@@ -1,19 +1,17 @@
 
 import * as THREE from 'three';
-import { usePBDObject, useWorld } from './hooks';
+import { usePBDObject } from './hooks';
 import * as Physics from './physics';
 
 
-import ROC from './assets/ROC.png';
+import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import JP from './assets/JP.png';
 import NVIDIA from './assets/NVIDIA.png';
-import { forwardRef, useImperativeHandle, useMemo } from 'react';
-import { useThree } from '@react-three/fiber';
-import { useStore } from 'zustand';
-import { useGlobalStore } from './store';
-import { useEventListener } from 'usehooks-ts';
+import ROC from './assets/ROC.png';
+import { useUpdateShowWire } from './store';
 import { useDraggable } from './useDraggable';
 const ROCTexture = new THREE.TextureLoader().load(NVIDIA, undefined, undefined, console.log);
+
 // const ROCTexture = new THREE.TextureLoader().load(JP);
 ROCTexture.repeat.set(1, 1);
 type Flag = 'ROC' | 'JP' | 'NVIDIA';
@@ -35,9 +33,7 @@ const Cloth = forwardRef<Physics.Cloth, Props>(function ({ flag, ...options }: P
         return t
     }, [flag]);
 
-    const world = useWorld();
-
-    const [cloth, remount] = usePBDObject(
+    const [cloth] = usePBDObject(
         Physics.Cloth,
         2.2,
         3.2,
@@ -55,6 +51,19 @@ const Cloth = forwardRef<Physics.Cloth, Props>(function ({ flag, ...options }: P
     });
 
     const bind = useDraggable({ id: cloth.id });
+    const { wireframe } = useUpdateShowWire();
+
+    // const cloth = useMemo(() => {
+    //     console.log('hi')
+    //     const width = 0.5;
+    //     const height = 3;
+    //     const spacing = 0.1;
+    //     const cloth = new Physics.Cloth(width, height, { spacing, enableCollision: true })
+    //     world.add(cloth);
+    //     return cloth;
+    // }, []);
+
+
 
     // TODO: PBD will not work if parent has transforms
     return <group
@@ -62,11 +71,11 @@ const Cloth = forwardRef<Physics.Cloth, Props>(function ({ flag, ...options }: P
     >
         <mesh geometry={cloth.geometry} castShadow receiveShadow>
             {/* <meshPhongMaterial color={0xffff00} side={THREE.FrontSide} /> */}
-            <meshPhongMaterial map={texture} side={THREE.FrontSide} />
+            <meshPhongMaterial map={texture} side={THREE.FrontSide} wireframe={wireframe === 'wire'} />
         </mesh>
         <mesh geometry={cloth.geometry} receiveShadow>
             {/* <meshPhongMaterial color={0x00ff00} side={THREE.BackSide} /> */}
-            <meshPhongMaterial map={texture} side={THREE.BackSide} />
+            <meshPhongMaterial map={texture} side={THREE.BackSide} wireframe={wireframe === 'wire'} />
         </mesh>
     </group >
 });

@@ -1,7 +1,6 @@
-import { BufferAttribute, BufferGeometry } from "three";
+import { assert } from "../utils";
 import { PBDObject } from "./PBDObject";
 import { DistanceConstraint } from "./constraint";
-import { assert } from "../utils";
 
 export class Pendulum extends PBDObject {
 
@@ -17,7 +16,7 @@ export class Pendulum extends PBDObject {
     // grabId: number;
     // grabInvMass: number;
 
-    constructor(masses: number[], lengths: number[], angles: number[], pinPos: number[] = [0.0, 0.0, 0.0]) {
+    constructor(masses: number[], lengths: number[], angles: number[], pinPos: number[] = [0.0, 0.0, 0.0], dir:number=0) {
         assert(masses.length === lengths.length && masses.length === angles.length, "Invalid masses and lengths length");
 
         const numParticles = masses.length+1;
@@ -32,7 +31,7 @@ export class Pendulum extends PBDObject {
         positionArray[2] = pos[2];
         invMass[0] = 0.0;
         for (let i = 1; i < numParticles; i++) {
-            pos[0] += lengths[i-1] * Math.sin(angles[i-1]);
+            pos[Math.round(dir)] += lengths[i-1] * Math.sin(angles[i-1]);
             pos[1] -= lengths[i-1] * Math.cos(angles[i-1]);
             positionArray[3 * i] = pos[0];
             positionArray[3 * i + 1] = pos[1];
