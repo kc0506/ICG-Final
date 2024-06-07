@@ -118,7 +118,7 @@ export default function Scene() {
       <meshPhongMaterial color={0xff0000} />
     </mesh>}
 
-    <Cloth ref={cloth} />
+    {/* <Cloth ref={cloth} /> */}
     <SoftBody />
     {/* <Test /> */}
   </>
