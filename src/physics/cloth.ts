@@ -1,10 +1,12 @@
 
-import { BufferAttribute, BufferGeometry } from "three";
+import { BufferAttribute, BufferGeometry, Object3D, Vector3 } from "three";
 import { PBDObject, PBDObjectOptions } from "./PBDObject";
 import { Constraint, DistanceConstraint } from "./constraint";
 
 export type ClothOptions = {
     spacing: number;
+    initialPosition?: number[];
+    initialEulers?: number[];
     // initialPositions: Float32Array;
     // enableCollision: boolean;
 } & PBDObjectOptions;
@@ -14,12 +16,28 @@ export class Cloth extends PBDObject {
     #geometry: BufferGeometry;
 
     constraints: Constraint[] = [];
+    numX: number;
+    numY: number;
 
     // distConstraints:    
 
-    constructor(width: number, height: number, { spacing, ...options }: ClothOptions) {
+    constructor(width: number,
+        height: number,
+        {
+            spacing,
+            initialEulers,
+            initialPosition,
+            ...options
+        }: ClothOptions
+    ) {
         const numX = Math.ceil(width / spacing),
             numY = Math.ceil(height / spacing);
+
+        const obj = new Object3D();
+        if (initialPosition)
+            obj.position.fromArray(initialPosition);
+        if (initialEulers)
+            obj.rotation.setFromVector3(new Vector3().fromArray(initialEulers));
 
         const numParticles = numX * numY;
         const positionArray = new Float32Array(numX * numY * 3);
@@ -28,8 +46,8 @@ export class Cloth extends PBDObject {
                 const id = i * numY + j;
                 const x = i * spacing - width / 2
                 const y = j * spacing - 1.5;
-                const z = 0.1 * Math.random() - 0.05;
-                positionArray.set([x, y, z], 3 * id);
+                const z = 0.1 * Math.random() - 0.02;
+                positionArray.set(obj.localToWorld(new Vector3(x, y, z)).toArray(), 3 * id);
             }
         }
         const invMass = new Float32Array(numParticles).fill(1);
@@ -102,8 +120,10 @@ export class Cloth extends PBDObject {
         this.#geometry.setAttribute("uv", new BufferAttribute(this.createUVArray(numX, numY, 'front'), 2));
         this.#geometry.setIndex(triIds);
         this.#geometry.computeVertexNormals();
-    }
 
+        this.numX = numX;
+        this.numY = numY;
+    }
 
 
     createUVArray(numX: number, numY: number, side: 'front' | 'back') {

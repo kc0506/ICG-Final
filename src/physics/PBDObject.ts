@@ -11,11 +11,17 @@ export type PBDObjectProps = {
 } & PBDObjectOptions;
 
 export type PBDObjectOptions = {
-    enableCollision: boolean;
+    enableCollision?: boolean;
 };
 
+export const PBDObjectDefaults: PBDObjectOptions = {
+    enableCollision: false,
+};
+
+let id = 0;
 
 export class PBDObject {
+    id: number;
     invMass: Float32Array;
     prevPositionArray: Float32Array;
     positionArray: Float32Array;
@@ -26,8 +32,8 @@ export class PBDObject {
     parentVelocity: Vector3;
 
 
-    #initialPositionArray: Float32Array;
-    #initialVelocityArray: Float32Array;
+    initialPositionArray: Float32Array;
+    initialVelocityArray: Float32Array;
 
     enableCollision;
     constructor({
@@ -38,6 +44,7 @@ export class PBDObject {
 
         enableCollision,
     }: PBDObjectProps) {
+        this.id = id++;
         this.enableCollision = enableCollision;
 
         this.invMass = invMass;
@@ -54,8 +61,8 @@ export class PBDObject {
         this.parentPosition = new Vector3();
         this.parentVelocity = new Vector3();
 
-        this.#initialPositionArray = new Float32Array(positionArray);
-        this.#initialVelocityArray = new Float32Array(velocityArray);
+        this.initialPositionArray = new Float32Array(positionArray);
+        this.initialVelocityArray = new Float32Array(velocityArray);
     }
 
     get numParticles() {
@@ -70,7 +77,7 @@ export class PBDObject {
     }
 
     reset() {
-        this.positionArray.set(this.#initialPositionArray);
-        this.velocityArray.set(this.#initialVelocityArray);
+        this.positionArray.set(this.initialPositionArray);
+        this.velocityArray.set(this.initialVelocityArray);
     }
 }
