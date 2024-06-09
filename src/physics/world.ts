@@ -202,10 +202,11 @@ export class World {
             if (vecDistSquared(vecAt(obj.positionArray, particleId), this.dragPos) > maxDragDistance)
                 continue;
 
-            this.dragParticleIds.push(particleId);
-            if (!this.orginalInvMass.has(particleId))
+            if (!this.orginalInvMass.has(particleId)) {
+                this.dragParticleIds.push(particleId);
                 this.orginalInvMass.set(particleId, obj.invMass[particleId]);
-            obj.invMass[particleId] = dragInvMass;
+                obj.invMass[particleId] = dragInvMass;
+            }
         }
         // console.log(this.dragParticleIds)
 

@@ -1,6 +1,6 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useEventListener } from 'usehooks-ts';
 import Cloth from './Cloth';
@@ -25,7 +25,7 @@ function Lights() {
   return <>
     <ambientLight color={0x505050} intensity={5} />
     <spotLight
-      intensity={10}
+      intensity={15}
       color={0xffffff}
       angle={Math.PI / 5}
       penumbra={0.2}
@@ -39,7 +39,7 @@ function Lights() {
 
     <directionalLight
       color={0x55505a}
-      intensity={1}
+      intensity={5}
       position={[0, 3, 0]}
       castShadow
       shadow-camera-near={1}
@@ -58,17 +58,22 @@ function Lights() {
 
 
 const gravity = new THREE.Vector3(0.00, -2.9, 0);
+if (location.pathname === '/pendulum') {
+  gravity.set(0, -9.8, 0);
+}
 // const gravity = new THREE.Vector3(0.00, 0, 0);
 // document.addEventListener('keypress', (e) => {
 //   console.log(e)
 // })
 
 import { vecAt } from './vecUtils';
+import SoftBody from './SoftBody';
+import TriplePendulum from './Pendulum';
 
 
 let hasSetConstraint = false;
 
-let t = 0;
+export let t = 0;
 let hasPrint = false;
 export default function Scene() {
   const world = useWorld();
@@ -88,7 +93,6 @@ export default function Scene() {
       -(e.clientY / size.height) * 2 + 1,
     )
   })
-
 
 
   useFrame((state, dt) => {
@@ -112,10 +116,48 @@ export default function Scene() {
     }
   })
 
+  const { camera } = useThree();
+  const { isHover } = useGlobalStore()
+
+
+  const routes = {
+    '/': <Basic />,
+    '/flags': <Flags />,
+    '/bunnys': <Bunnys />,
+    '/pendulum': <PedunlumScene />,
+  }[window.location.pathname];
+
+  return <>
+    <PerspectiveCamera makeDefault position={[0, 0, 10]} />
+    {!isHover && < OrbitControls />}
+    <Lights />
+    <Ground />
+
+    {routes}
+  </>
+}
+
+const curPendulumPos = new THREE.Vector3();
+
+function Basic() {
+
   const cloth = useRef<Physics.Cloth>(null!);
   const bunny1 = useRef<Physics.SoftBody>(null!);
+
+  return <>
+    <SoftBody ref={bunny1} scale={1.5} />
+    {/* <SoftBody scale={1.75} initialPosition={new THREE.Vector3(0, 3, 0)} /> */}
+    {/* <Cloth ref={cloth} flag='NVIDIA' scale={2} /> */}
+    <Cloth flag='ROC' scale={1} initialPosition={[0, 0, 2]} />
+  </>
+}
+
+function Bunnys() {
+
+  const world = useWorld();
+
+  const bunny1 = useRef<Physics.SoftBody>(null!);
   const bunny2 = useRef<Physics.SoftBody>(null!);
-  const triplePendulum = useRef<Physics.Pendulum>(null!);
 
   const idRef1 = useRef(0);
   const idRef2 = useRef(0);
@@ -131,11 +173,10 @@ export default function Scene() {
     position.setXYZ(0, pos1[0], pos1[1], pos1[2]);
     position.setXYZ(1, pos2[0], pos2[1], pos2[2]);
     position.needsUpdate = true;
+
   });
 
-
   useEffect(() => {
-    // if (hasSetConstraint) return;
     if (!bunny1.current || !bunny2.current) return;
 
     const constraint = new Physics.DistanceConstraintMulti(2, world.objects);
@@ -143,74 +184,17 @@ export default function Scene() {
     const id2 = Math.floor(Math.random() * bunny2.current.numParticles);
     constraint.addConstraint(bunny1.current.id, id1, bunny2.current.id, id2);
     world.addConstraint(constraint);
-
-    // bunny1.current.addConstraint(constraint);
-    // bunny2.current.addConstraint(constraint);
-
   }, [bunny1.current?.id, bunny2.current?.id])
 
-  useEventListener('keypress', (e) => {
-    if (e.key === 'r') {
-      cloth.current?.reset();
-      triplePendulum.current?.reset();
-      bunny1.current?.reset();
-    }
-  })
-
-  const { camera } = useThree();
-  const { isHover } = useGlobalStore()
-
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame(() => {
-    ref.current?.position?.copy(Physics.curPosition);
-
-    if (!cloth.current) return;
-    const idLT = 0, idLB = cloth.current.numY - 1, idRT = cloth.current.numX * cloth.current.numY - 1, idRB = cloth.current.numX * cloth.current.numY - cloth.current.numY;
-    cloth.current.invMass[idLT] = 0;
-    cloth.current.invMass[idLB] = 0;
-  })
-
-
-  const routes = {
-    '/flags': <Flags />,
-  }[window.location.pathname];
-
   return <>
-    {/* <mesh ref={ref} position={[0, 0, 0]}>
-      <sphereGeometry args={[0.3]} />
-      <meshBasicMaterial color={0xff0000} />
-    </mesh> */}
-    {/* <gridHelper args={[20, 20]} position={[0, -2, 0]} /> */}
-    <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-    {!isHover && < OrbitControls />}
-    <Lights />
-    <Ground />
-
-    {false && < mesh position={[5, 5, 0]}>
-      <boxGeometry args={[5, 3, 1]} />
-      <meshPhongMaterial color={0xff0000} />
-    </mesh>}
-
-    {routes}
-
-    {/* <SoftBody ref={bunny1} />
-    <SoftBody ref={bunny2} initialPosition={new THREE.Vector3(1, 1, 1)} /> */}
-    {/* <lineSegments geometry={geometry}>
+    <lineSegments geometry={geometry}>
       <lineBasicMaterial color={0xff00ff} />
-    </lineSegments> */}
-    {/* <Cloth ref={cloth} flag='JP' /> */}
-    {/* <Test /> */}
-    {/* <TriplePendulum ref={triplePendulum} /> */}
-    {/* <lineSegments geometry={geometry}>
-      <lineBasicMaterial vertexColors />
-    </lineSegments> */}
+    </lineSegments>
+    <SoftBody ref={bunny1} scale={1.5} />
+    <SoftBody ref={bunny2} initialPosition={new THREE.Vector3(1, 1, 1)} />
   </>
 }
-const curPendulumPos = new THREE.Vector3();
 
-
-
-// let t=0;
 function Flags() {
 
   useFrame(() => {
@@ -263,3 +247,43 @@ function Flags() {
   </>
 
 }
+
+function PedunlumScene() {
+
+  const pendulumsRef = useRef<React.RefObject<Physics.Pendulum>[]>([
+    React.createRef<Physics.Pendulum>(),
+    React.createRef<Physics.Pendulum>(),
+    React.createRef<Physics.Pendulum>()
+  ]);
+  useEventListener('keypress', (e) => {
+    if (e.key === 'r') {
+      pendulumsRef.current?.forEach(p => p.current?.reset());
+    }
+  })
+
+  const c = new THREE.Color("#999999");
+
+
+  useFrame(() => {
+    let s = Math.sin(t);
+    console.log(s)
+    s = 0;
+    r = (new THREE.Color("#FF5151").multiplyScalar(0))
+    r.copy(y)
+    // console.log(r)
+    //  b = new THREE.Color("#00E3E3")
+    //  y = new THREE.Color("#FFFF37")
+  });
+
+
+  return <>
+    <TriplePendulum ref={pendulumsRef.current[0]} pos={[2, 2.5, 0.0]} mass={[1.0, 2.0, 1.5]} length={[0.5, 1, 0.7]} color={r as any} dir={0} />
+    <TriplePendulum ref={pendulumsRef.current[1]} pos={[0, 2.5, 0.0]} mass={[1.0, 0.7, 0.5]} length={[1, 0.5, 0.7]} color={b as any} dir={2} />
+    <TriplePendulum ref={pendulumsRef.current[2]} pos={[-2, 2.5, 0.0]} mass={[0.7, 1.5, 2]} length={[0.8, 0.7, 0.6]} color={y as any} dir={0} />
+  </>
+}
+
+
+let r = new THREE.Color("#FF5151");
+let b = new THREE.Color("#00E3E3")
+let y = new THREE.Color("#FFFF37")

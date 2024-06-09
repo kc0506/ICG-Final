@@ -6,7 +6,16 @@ import { useUpdateShowWire } from "./store";
 import React, { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import * as THREE from "three";
 
-const TriplePendulum = forwardRef<Pendulum>(function ({ pos, mass, length, color, dir }, ref) {
+type Props = {
+    pos: number[];
+    mass: number[];
+    length: number[];
+    color: string;
+    dir: number;
+};
+
+
+const TriplePendulum = forwardRef<Pendulum, Props>(function ({ pos, mass, length, color, dir }: Props, ref) {
     const { wireframe } = useUpdateShowWire();
 
     const masses = mass;

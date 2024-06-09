@@ -7,6 +7,7 @@ export type ClothOptions = {
     spacing: number;
     initialPosition?: number[];
     initialEulers?: number[];
+    scale?: number;
     // initialPositions: Float32Array;
     // enableCollision: boolean;
 } & PBDObjectOptions;
@@ -38,6 +39,8 @@ export class Cloth extends PBDObject {
             obj.position.fromArray(initialPosition);
         if (initialEulers)
             obj.rotation.setFromVector3(new Vector3().fromArray(initialEulers));
+        if(options.scale)
+            obj.scale.setScalar(options.scale);
 
         const numParticles = numX * numY;
         const positionArray = new Float32Array(numX * numY * 3);

@@ -16,7 +16,7 @@ const SoftBody = forwardRef<Physics.SoftBody, Props>(function (props: Props, ref
     const [bunny ] = usePBDObject(
         Physics.SoftBody,
         bunnyModel,
-        { enableCollision: false, ...props }
+        { enableCollision: false, ...props , volCompliance: 0}
     )
 
     useImperativeHandle(ref, () => {
@@ -27,7 +27,7 @@ const SoftBody = forwardRef<Physics.SoftBody, Props>(function (props: Props, ref
 
     return <>
         <mesh {...bind} geometry={bunny.geometry} position={[0, 0, 0]} castShadow receiveShadow>
-            <meshPhongMaterial color={0x0000ff} wireframe={wireframe === 'wire'} />
+            <meshPhongMaterial shininess={1000} reflectivity={10} color={0x0000ff} wireframe={wireframe === 'wire'} />
         </mesh>
     </>
 

@@ -22,7 +22,7 @@ export default function App() {
           <Perf />
         </Canvas>
       </div>
-      <div className='z-10 fixed top-0 right-0'>
+      <div className='z-10 fixed top-0 left-0'>
         Manual Update
         <input type="checkbox" name="" checked={mode === 'manual'} onChange={e => {
           const mode = e.target.checked ? 'manual' : 'auto';
@@ -30,7 +30,7 @@ export default function App() {
           localStorage.setItem('mode', mode)
         }} id="" />
       </div>
-      <div className='z-10 fixed top-5 right-0'>
+      <div className='z-10 fixed top-5 left-0'>
         Show Framework
         <input type="checkbox" name="" checked={wireframe === 'wire'} onChange={e => {
           const mode = e.target.checked ? 'wire' : 'body';

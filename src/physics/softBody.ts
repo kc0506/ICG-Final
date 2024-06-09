@@ -16,6 +16,7 @@ type Model = {
 export type SoftBodyOptions = {
     initialPosition?: THREE.Vector3;
     initialEuler?: THREE.Vector3;
+    scale?: number;
     edgeCompliance?: number;
     volCompliance?: number;
 }
@@ -47,10 +48,11 @@ export class SoftBody extends PBDObject {
         const prevPositionArray = new Float32Array(numParticles * 3);
         const velocityArray = new Float32Array(numParticles * 3).fill(0);
 
-        const { initialPosition, initialEuler } = options;
+        const { initialPosition, initialEuler, scale } = options;
         const obj = new THREE.Object3D();
         if (initialPosition) obj.position.copy(initialPosition);
         if (initialEuler) obj.rotation.set(initialEuler.x, initialEuler.y, initialEuler.z);
+        if (scale) obj.scale.set(scale, scale, scale);
         for (let i = 0; i < numParticles; i++) {
             vecCopy(positionArray, i, obj.localToWorld(new THREE.Vector3().fromArray(vecAt(positionArray, i))));
         }

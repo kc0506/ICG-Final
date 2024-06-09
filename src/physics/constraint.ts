@@ -172,7 +172,12 @@ export class VolumeConstraint extends Constraint {
     grads: Float32Array;
     volIdOrder: number[][];
 
-    constructor(maxnumOfTets: number, volCompliance: number = 0.0, invMass: Float32Array, positionArray: Float32Array) {
+    constructor(
+        maxnumOfTets: number,
+        volCompliance: number =0,
+        invMass: Float32Array,
+        positionArray: Float32Array
+    ) {
         super();
         this.invMass = invMass;
         this.positionArray = positionArray;
@@ -201,7 +206,7 @@ export class VolumeConstraint extends Constraint {
     }
 
     solve(dt: number): void {
-        const alpha = this.volCompliance / (dt * dt) / 20000.0;
+        const alpha = this.volCompliance / (dt * dt) / 20000;
 
         for (let i = 0; i < this.numTets; i++) {
             if (this.tetIds[4 * i] === -1) continue;

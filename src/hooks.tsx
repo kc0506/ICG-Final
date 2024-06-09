@@ -3,7 +3,10 @@ import { useMemo, useRef, useState } from 'react';
 import * as Physics from './physics';
 
 
-const world = new Physics.World({ numSubsteps: 10 });
+const world = new Physics.World({
+    numSubsteps:
+        location.pathname === '/pendulum' ? 50 : 10,
+});
 
 // TODO
 export function useWorld() {
