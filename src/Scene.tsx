@@ -123,8 +123,8 @@ export default function Scene() {
   const routes = {
     '/': <Basic />,
     '/flags': <Flags />,
-    '/bunnys': <Bunnys />,
-    '/pendulum': <PedunlumScene />,
+    '/bunnies': <Bunnys />,
+    '/pendulums': <PedunlumScene />,
   }[window.location.pathname];
 
   return <>
