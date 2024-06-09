@@ -38,7 +38,7 @@ const Cloth = forwardRef<Physics.Cloth, Props>(function ({ flag, ...options }: P
         2.2,
         3.2,
         {
-            spacing: 0.2,
+            spacing: 0.1,
             enableCollision: true,
             // initialEulers: [Math.PI / 2, 0, 0],
             // initialEulers: [0, Math.PI / 2, 0],
@@ -69,7 +69,7 @@ const Cloth = forwardRef<Physics.Cloth, Props>(function ({ flag, ...options }: P
     return <group
         {...bind}
     >
-        <mesh geometry={cloth.geometry} castShadow receiveShadow>
+        <mesh geometry={cloth.geometry} castShadow >
             {/* <meshPhongMaterial color={0xffff00} side={THREE.FrontSide} /> */}
             <meshPhongMaterial map={texture} side={THREE.FrontSide} wireframe={wireframe === 'wire'} />
         </mesh>

@@ -45,7 +45,7 @@ const TriplePendulum = forwardRef<Pendulum, Props>(function ({ pos, mass, length
     const cylinderRefs = useMemo(() => radii.map(() => React.createRef<THREE.Mesh>()), [radii.length]);
 
     // trail geomerty
-    const trailLength = 100;
+    const trailLength = 1000;
     const trailGeometry = useMemo(() => new THREE.BufferGeometry(), []);
     const trailMaterial = useMemo(() => new THREE.LineBasicMaterial({ color: color }), [color]);
     const trailPoints = useMemo(() => new Float32Array(trailLength * 3), []);

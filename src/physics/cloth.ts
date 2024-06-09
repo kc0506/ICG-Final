@@ -49,7 +49,7 @@ export class Cloth extends PBDObject {
                 const id = i * numY + j;
                 const x = i * spacing - width / 2
                 const y = j * spacing - 1.5;
-                const z = 0.1 * Math.random() - 0.02;
+                const z = 0.05 * Math.random() - 0.02;
                 positionArray.set(obj.localToWorld(new Vector3(x, y, z)).toArray(), 3 * id);
             }
         }

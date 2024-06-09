@@ -18,7 +18,7 @@ export class World {
     objects: Map<number, PBDObject> = new Map();
     #tmpVecs = new Float32Array(10 * 3);
 
-    #minDistance = 0.2;
+    #minDistance = 0.1;
     #numSubsteps;
     constructor({ numSubsteps }: WorldProps) {
         this.#numSubsteps = numSubsteps;

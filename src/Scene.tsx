@@ -11,7 +11,7 @@ import { assertionFail } from './utils';
 
 
 function Ground() {
-  return <mesh position={[0, -2, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+  return <mesh position={[0, -2.1, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
     <planeGeometry args={[20, 20]} />
     <meshPhongMaterial {... { color: 0xa0adaf, shininess: 150 }} />
   </mesh>
@@ -69,6 +69,7 @@ if (location.pathname === '/pendulum') {
 import { vecAt } from './vecUtils';
 import SoftBody from './SoftBody';
 import TriplePendulum from './Pendulum';
+import { OrbitControls as THREEOrbitControls } from 'three/examples/jsm/Addons.js';
 
 
 let hasSetConstraint = false;
@@ -127,9 +128,15 @@ export default function Scene() {
     '/pendulums': <PedunlumScene />,
   }[window.location.pathname];
 
+  const orbitControlRef = useRef<THREEOrbitControls>(null);
+  useFrame(() => {
+    if (!orbitControlRef.current) return;
+    orbitControlRef.current.enabled = !isHover && !world.isDragging;
+  })
+
   return <>
     <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-    {!isHover && < OrbitControls />}
+    < OrbitControls ref={orbitControlRef} />
     <Lights />
     <Ground />
 

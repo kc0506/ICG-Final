@@ -1,0 +1,243 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{none/global//global/global/global}
+  \entry{Muller2007-ht}{article}{}{}
+    \name{author}{4}{}{%
+      {{hash=MM}{%
+         family={M{\"u}ller},
+         familyi={M\bibinitperiod},
+         given={Matthias},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=HB}{%
+         family={Heidelberger},
+         familyi={H\bibinitperiod},
+         given={Bruno},
+         giveni={B\bibinitperiod},
+      }}%
+      {{hash=HM}{%
+         family={Hennix},
+         familyi={H\bibinitperiod},
+         given={Marcus},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=RJ}{%
+         family={Ratcliff},
+         familyi={R\bibinitperiod},
+         given={John},
+         giveni={J\bibinitperiod},
+      }}%
+    }
+    \list{language}{1}{%
+      {en}%
+    }
+    \list{publisher}{1}{%
+      {Elsevier BV}%
+    }
+    \strng{namehash}{MM+2}
+    \strng{fullhash}{MMHBHMRJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{abstract}{%
+    The most popular approaches for the simulation of dynamic systems in
+  computer graphics are force based. Internal and external forces are
+  accumulated from which accelerations are computed based on Newton's second
+  law of motion. A time integration method is then used to update the
+  velocities and finally the positions of the object. A few simulation methods
+  (most rigid body simulators) use impulse based dynamics and directly
+  manipulate velocities. In this paper we present an approach which omits the
+  velocity layer as well and immediately works on the positions. The main
+  advantage of a position based approach is its controllability. Overshooting
+  problems of explicit integration schemes in force based systems can be
+  avoided. In addition, collision constraints can be handled easily and
+  penetrations can be resolved completely by projecting points to valid
+  locations. We have used the approach to build a real time cloth simulator
+  which is part of a physics software library for games. This application
+  demonstrates the strengths and benefits of the method.%
+    }
+    \field{number}{2}
+    \field{pages}{109\bibrangedash 118}
+    \field{title}{Position based dynamics}
+    \field{volume}{18}
+    \field{journaltitle}{J. Vis. Commun. Image Represent.}
+    \field{month}{04}
+    \field{year}{2007}
+  \endentry
+
+  \entry{Macklin2016-fh}{inproceedings}{}{}
+    \name{author}{3}{}{%
+      {{hash=MM}{%
+         family={Macklin},
+         familyi={M\bibinitperiod},
+         given={Miles},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=MM}{%
+         family={M{\"u}ller},
+         familyi={M\bibinitperiod},
+         given={Matthias},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=CN}{%
+         family={Chentanez},
+         familyi={C\bibinitperiod},
+         given={Nuttapong},
+         giveni={N\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {ACM}%
+    }
+    \strng{namehash}{MMMMCN1}
+    \strng{fullhash}{MMMMCN1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{booktitle}{Proceedings of the 9th International Conference on Motion
+  in Games}
+    \field{title}{{XPBD}}
+    \list{location}{1}{%
+      {Burlingame California}%
+    }
+    \field{month}{10}
+    \field{year}{2016}
+    \warn{\item Can't use 'location' + 'address'}
+  \endentry
+
+  \entry{Macklin2014-ol}{article}{}{}
+    \name{author}{4}{}{%
+      {{hash=MM}{%
+         family={Macklin},
+         familyi={M\bibinitperiod},
+         given={Miles},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=MM}{%
+         family={M{\"u}ller},
+         familyi={M\bibinitperiod},
+         given={Matthias},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=CN}{%
+         family={Chentanez},
+         familyi={C\bibinitperiod},
+         given={Nuttapong},
+         giveni={N\bibinitperiod},
+      }}%
+      {{hash=KTY}{%
+         family={Kim},
+         familyi={K\bibinitperiod},
+         given={Tae-Yong},
+         giveni={T\bibinithyphendelim Y\bibinitperiod},
+      }}%
+    }
+    \list{language}{1}{%
+      {en}%
+    }
+    \list{publisher}{1}{%
+      {Association for Computing Machinery (ACM)}%
+    }
+    \strng{namehash}{MM+1}
+    \strng{fullhash}{MMMMCNKTY1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{abstract}{%
+    We present a unified dynamics framework for real-time visual effects. Using
+  particles connected by constraints as our fundamental building block allows
+  us to treat contact and collisions in a unified manner, and we show how this
+  representation is flexible enough to model gases, liquids, deformable solids,
+  rigid bodies and cloth with two-way interactions. We address some common
+  problems with traditional particle-based methods and describe a parallel
+  constraint solver based on position-based dynamics that is efficient enough
+  for real-time applications.%
+    }
+    \field{number}{4}
+    \field{pages}{1\bibrangedash 12}
+    \field{title}{Unified particle physics for real-time applications}
+    \field{volume}{33}
+    \field{journaltitle}{ACM Trans. Graph.}
+    \field{month}{07}
+    \field{year}{2014}
+  \endentry
+
+  \entry{Bender2015-vx}{misc}{}{}
+    \name{author}{3}{}{%
+      {{hash=BJ}{%
+         family={Bender},
+         familyi={B\bibinitperiod},
+         given={Jan},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=MM}{%
+         family={M{\"u}ller},
+         familyi={M\bibinitperiod},
+         given={Matthias},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=MM}{%
+         family={Macklin},
+         familyi={M\bibinitperiod},
+         given={Miles},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {The Eurographics Association}%
+    }
+    \strng{namehash}{BJMMMM1}
+    \strng{fullhash}{BJMMMM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{abstract}{%
+    The physically-based simulation of mechanical effects has been an important
+  research topic in computer graphics for more than two decades. Classical
+  methods in this field discretize Newton's second law and determine different
+  forces to simulate various effects like stretching, shearing, and bending of
+  deformable bodies or pressure and viscosity of fluids, to mention just a few.
+  Given these forces, velocities and finally positions are determined by a
+  numerical integration of the resulting accelerations. In the last years
+  position-based simulation methods have become popular in the graphics
+  community. In contrast to classical simulation approaches these methods
+  compute the position changes in each simulation step directly, based on the
+  solution of a quasi-static problem. Therefore, position-based approaches are
+  fast, stable and controllable which make them well-suited for use in
+  interactive environments. However, these methods are generally not as
+  accurate as force-based methods but still provide visual plausibility. Hence,
+  the main application areas of position-based simulation are virtual reality,
+  computer games and special effects in movies and commercials. In this
+  tutorial we first introduce the basic concept of position-based dynamics.
+  Then we present different solvers and compare them with the classical
+  implicit Euler method. We discuss approaches to improve the convergence of
+  these solvers. Moreover, we show how position-based methods are applied to
+  simulate hair, cloth, volumetric deformable bodies, rigid body systems and
+  fluids. We also demonstrate how complex effects like anisotropy or plasticity
+  can be simulated and introduce approaches to improve the performance.
+  Finally, we give an outlook and discuss open problems.%
+    }
+    \field{title}{Position-based simulation methods in computer graphics}
+    \field{year}{2015}
+  \endentry
+
+  \entry{noauthor_undated-yx}{misc}{}{}
+    \field{labeltitlesource}{title}
+  \field{howpublished}{\url{https://matthias-research.github.io/pages/tenMinutePhysics/index.html}}
+    \field{note}{Accessed: 2024-6-9}
+    \field{title}{Ten Minute Physics}
+  \endentry
+\enddatalist
+\endinput

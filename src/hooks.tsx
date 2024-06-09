@@ -5,7 +5,7 @@ import * as Physics from './physics';
 
 const world = new Physics.World({
     numSubsteps:
-        location.pathname === '/pendulum' ? 50 : 10,
+        location.pathname === '/pendulum' ? 70 : 10,
 });
 
 // TODO

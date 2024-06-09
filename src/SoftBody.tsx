@@ -16,7 +16,7 @@ const SoftBody = forwardRef<Physics.SoftBody, Props>(function (props: Props, ref
     const [bunny ] = usePBDObject(
         Physics.SoftBody,
         bunnyModel,
-        { enableCollision: false, ...props , volCompliance: 0}
+        { enableCollision: false, ...props , volCompliance: 100}
     )
 
     useImperativeHandle(ref, () => {

@@ -1,0 +1,114 @@
+@ARTICLE{Muller2007-ht,
+  title     = "Position based dynamics",
+  author    = "M{\"u}ller, Matthias and Heidelberger, Bruno and Hennix, Marcus
+               and Ratcliff, John",
+  abstract  = "The most popular approaches for the simulation of dynamic
+               systems in computer graphics are force based. Internal and
+               external forces are accumulated from which accelerations are
+               computed based on Newton's second law of motion. A time
+               integration method is then used to update the velocities and
+               finally the positions of the object. A few simulation methods
+               (most rigid body simulators) use impulse based dynamics and
+               directly manipulate velocities. In this paper we present an
+               approach which omits the velocity layer as well and immediately
+               works on the positions. The main advantage of a position based
+               approach is its controllability. Overshooting problems of
+               explicit integration schemes in force based systems can be
+               avoided. In addition, collision constraints can be handled
+               easily and penetrations can be resolved completely by projecting
+               points to valid locations. We have used the approach to build a
+               real time cloth simulator which is part of a physics software
+               library for games. This application demonstrates the strengths
+               and benefits of the method.",
+  journal   = "J. Vis. Commun. Image Represent.",
+  publisher = "Elsevier BV",
+  volume    =  18,
+  number    =  2,
+  pages     = "109--118",
+  month     =  apr,
+  year      =  2007,
+  language  = "en"
+}
+
+@INPROCEEDINGS{Macklin2016-fh,
+  title           = "{XPBD}",
+  booktitle       = "Proceedings of the 9th International Conference on Motion
+                     in Games",
+  author          = "Macklin, Miles and M{\"u}ller, Matthias and Chentanez,
+                     Nuttapong",
+  publisher       = "ACM",
+  month           =  oct,
+  year            =  2016,
+  address         = "New York, NY, USA",
+  copyright       = "http://www.acm.org/publications/policies/copyright\_policy\#Background",
+  conference      = "MiG '16: Motion In Games",
+  location        = "Burlingame California"
+}
+
+@ARTICLE{Macklin2014-ol,
+  title     = "Unified particle physics for real-time applications",
+  author    = "Macklin, Miles and M{\"u}ller, Matthias and Chentanez, Nuttapong
+               and Kim, Tae-Yong",
+  abstract  = "We present a unified dynamics framework for real-time visual
+               effects. Using particles connected by constraints as our
+               fundamental building block allows us to treat contact and
+               collisions in a unified manner, and we show how this
+               representation is flexible enough to model gases, liquids,
+               deformable solids, rigid bodies and cloth with two-way
+               interactions. We address some common problems with traditional
+               particle-based methods and describe a parallel constraint solver
+               based on position-based dynamics that is efficient enough for
+               real-time applications.",
+  journal   = "ACM Trans. Graph.",
+  publisher = "Association for Computing Machinery (ACM)",
+  volume    =  33,
+  number    =  4,
+  pages     = "1--12",
+  month     =  jul,
+  year      =  2014,
+  copyright = "http://www.acm.org/publications/policies/copyright\_policy\#Background",
+  language  = "en"
+}
+
+
+@MISC{Bender2015-vx,
+  title     = "Position-based simulation methods in computer graphics",
+  author    = "Bender, Jan and M{\"u}ller, Matthias and Macklin, Miles",
+  abstract  = "The physically-based simulation of mechanical effects has been
+               an important research topic in computer graphics for more than
+               two decades. Classical methods in this field discretize Newton's
+               second law and determine different forces to simulate various
+               effects like stretching, shearing, and bending of deformable
+               bodies or pressure and viscosity of fluids, to mention just a
+               few. Given these forces, velocities and finally positions are
+               determined by a numerical integration of the resulting
+               accelerations. In the last years position-based simulation
+               methods have become popular in the graphics community. In
+               contrast to classical simulation approaches these methods
+               compute the position changes in each simulation step directly,
+               based on the solution of a quasi-static problem. Therefore,
+               position-based approaches are fast, stable and controllable
+               which make them well-suited for use in interactive environments.
+               However, these methods are generally not as accurate as
+               force-based methods but still provide visual plausibility.
+               Hence, the main application areas of position-based simulation
+               are virtual reality, computer games and special effects in
+               movies and commercials. In this tutorial we first introduce the
+               basic concept of position-based dynamics. Then we present
+               different solvers and compare them with the classical implicit
+               Euler method. We discuss approaches to improve the convergence
+               of these solvers. Moreover, we show how position-based methods
+               are applied to simulate hair, cloth, volumetric deformable
+               bodies, rigid body systems and fluids. We also demonstrate how
+               complex effects like anisotropy or plasticity can be simulated
+               and introduce approaches to improve the performance. Finally, we
+               give an outlook and discuss open problems.",
+  publisher = "The Eurographics Association",
+  year      =  2015
+}
+
+@MISC{noauthor_undated-yx,
+  title        = "Ten Minute Physics",
+  howpublished = "\url{https://matthias-research.github.io/pages/tenMinutePhysics/index.html}",
+  note         = "Accessed: 2024-6-9"
+}
